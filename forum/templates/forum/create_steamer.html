@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<h2>Add the steamer</h2>
+<form method="post" action="{% url 'forum:add_steamer' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="d-grid col-6 mx-auto">
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+{% endblock %}

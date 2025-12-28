@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}View All Recruits{% endblock %}
+{% block content %}
+{% for order in orders %}
+<div class="container w-50">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ order.name_order }}</h5>
+            <p class="card-text">{{ order.description_of_order }}</p>
+            <p class="card-text">{{ order.rate_for_order }}</p>
+            <p class="card-text">{{ order.rank }}</p>
+            <p class="card-text">{{ order.data_giving }}</p>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

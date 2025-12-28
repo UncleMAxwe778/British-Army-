@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+<title>View the Recruit</title>
+{% block content %}
+<div class="container w-50">
+    <div class="card">
+        <div class="card-header">
+            All Information about {{ private.first_name_private }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ private.first_name_private }}</h5>
+            <p class="card-text">{{ private.last_name_private }}</p>
+            <p class="card-text">{{ private.call_sign }}</p>
+            <p class="card-text">{{ private.rank }}</p>
+            <p class="card-text">{{ private.biography }}</p>
+            <p class="card-text">{{ private.university_education }}</p>
+            <p class="card-text">{{ private.steamer }}</p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

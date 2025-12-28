@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for private in privates %}
+<div class="container w-50">
+    <div class="card">
+        <div class="card-header">
+            {{ private.call_sign }}
+        </div>
+        <div class="card-body">
+            <a href="{% url 'forum:private_view' private.id %}" class= "btn btn-primary">Read  full biography private: {{ private.call_sign }}</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<div class="pagination d-flex justify-content-center mt-4">
+    <ul class="pagination">
+        {% if privates.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ private.previous_page_number }}"
+            >Back</a
+            >
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Back</span>
+        </li>
+        {% endif %}
+
+        {% for num in private.paginator.page_range %}
+        <li class="page-item {% if num == private.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+
+        {% if private.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ privates.next_page_number }}"
+            >Move</a
+            >
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Move</span>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
