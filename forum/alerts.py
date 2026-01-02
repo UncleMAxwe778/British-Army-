@@ -6,4 +6,4 @@ from .models import Order
 @receiver(post_save, sender=Order)
 def course_created_signal(sender, instance, created, **kwargs):
     if created:
-        print(f"New order has been created: {instance.name_order} rating of order:{instance.rate_for_order}")
+        print(f"New order has been created: {instance.name_order} rating of order:{instance.rate_for_order}, Posted by:{instance.user}")

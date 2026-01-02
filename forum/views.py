@@ -46,6 +46,10 @@ def add_recruit_view(request):
 
 @login_required
 def make_order_for_private(request):
+
+    if not request.user.can_create_orders():
+        return HttpResponseForbidden("You don't have permission to create orders.")
+
     form = OrderForm()
 
     if request.method == "POST":

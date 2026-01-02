@@ -17,7 +17,7 @@ class RecruitForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ("name_order", "description_of_order", "data_giving", "rate_for_order")
+        fields = ("name_order", "description_of_order", "data_giving", "rate_for_order", "user")
 
     def save(self, commit=True):
         order = super().save(commit=False)

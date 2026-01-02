@@ -128,6 +128,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACK = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
+ALLOWED_ORDER_RANKS = [
+    "COL",
+    "BRIG",
+    "MG",
+    "LG",
+    "GEN",
+]
+
 AUTH_USER_MODEL = "user_officers.CustomUser"
 
 LOGIN_URL = "auth_officers:login"

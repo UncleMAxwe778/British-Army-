@@ -5,22 +5,27 @@
 {% block content %}
 <div class="container w-50">
     <h2>Create the for private the order</h2>
+    {% if user.can_create_orders %}
     <form method="post" action="{% url 'forum:make_order_for_soldier' %}">
         {% csrf_token %}
         {{ form|crispy }}
-        <div class="d-grid col-6 mx-auto">
-            <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+    {% else %}
+    <div class="alert alert-danger">
+        You do not have permission to create orders.
+    </div>
+    {% endif %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
     </form>
 </div>
 {% endblock %}
