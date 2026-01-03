@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container w-50">
+    <h2>Create the for private the order</h2>
+    {% if user.can_create_news %}
+    <form method="post" action="{% url 'forum:create_news_of_british_army' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+    {% else %}
+    <div class="alert alert-danger">
+        You do not have permission to add news of BA.
+    </div>
+    {% endif %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    </form>
+</div>
+{% endblock %}

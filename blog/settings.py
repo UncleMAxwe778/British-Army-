@@ -136,6 +136,9 @@ ALLOWED_ORDER_RANKS = [
     "GEN",
 ]
 
+ALLOWED_NEWS_ROLES = ["PRESS"]
+
+
 AUTH_USER_MODEL = "user_officers.CustomUser"
 
 LOGIN_URL = "auth_officers:login"

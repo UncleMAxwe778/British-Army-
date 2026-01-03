@@ -22,6 +22,13 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
+
+    ROLE_CHOICES = [
+        ("CTZ", "Citizen"),
+        ("PRESS", "Journalist"),
+        ("MLT", "Military")
+    ]
+
     RANK_CHOICES = [
         ("RCT", "Recruit"),
         ("PVT", "Private"),
@@ -56,6 +63,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=75)
     last_name = models.CharField(max_length=95)
+    role = models.CharField(max_length=10,choices=ROLE_CHOICES, default="MLT",)
     rank = models.CharField(max_length=10, choices=RANK_CHOICES, default="RCT")
     regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES, default="BA")
     is_active = models.BooleanField(default=True)
@@ -80,3 +88,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def can_create_orders(self):
         return self.rank in settings.ALLOWED_ORDER_RANKS
+
+    def can_create_news(self):
+        return self.role in settings.ALLOWED_NEWS_ROLES

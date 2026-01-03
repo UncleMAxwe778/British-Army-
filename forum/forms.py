@@ -1,18 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Private, Order, Steamer
+from .models import Order, News
 
 
-class RecruitForm(forms.ModelForm):
-    class Meta:
-        model = Private
-        fields = ("first_name_private", "last_name_private", "call_sign", "rank", "biography", "university_education", "steamer")
-
-    def save(self, commit=True):
-        recruit = super().save(commit=False)
-        recruit.is_active = True
-        recruit.save()
-        return recruit
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -25,13 +15,17 @@ class OrderForm(forms.ModelForm):
         order.save()
         return order
 
-class SteamerForm(forms.ModelForm):
+
+
+
+class NewsForm(forms.ModelForm):
     class Meta:
-        model = Steamer
-        fields = ("first_name_steamers", "last_name_steamers", "call_sign", "rank", "biography", "combat_experience")
+        model = News
+        fields = ("news_name", "description_of_news", "rate_for_news", "published_by", "data_giving")
 
     def save(self, commit=True):
-        steamer = super().save(commit=False)
-        steamer.is_active = True
-        steamer.save()
-        return steamer
+        news = super().save(commit=False)
+        news.is_active = True
+        news.save()
+        return news
+

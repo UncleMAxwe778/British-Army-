@@ -6,43 +6,21 @@ from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 
-from .forms import RecruitForm, OrderForm, SteamerForm
-from .models import Steamer, Private, Order
+from .forms import OrderForm, NewsForm
+from .models import Order, News
 from .filters import PrivateFilter
 
 def home(request):
-    steamers = Steamer.objects.all()
-    privates_list = Private.objects.all()
-    paginator = Paginator(privates_list , 1)
+    order_list = Order.objects.all()
+    paginator = Paginator(order_list , 1)
     page_number = request.GET.get('page', 1)
     try:
-        privates = paginator.page(page_number)
+        orders = paginator.page(page_number)
     except EmptyPage:
-        privates = paginator.page(paginator.num_pages)
+        orders = paginator.page(paginator.num_pages)
     except PageNotAnInteger:
-        privates = paginator.page(1)
-    return render(request, 'forum/home.html', {'steamers': steamers, 'privates': privates})
-
-def private_view(request, private_id):
-    private = get_object_or_404(Private, id=private_id)
-    return render(request, 'forum/private_view.html', {'private': private})
-
-def show_all_privates(request):
-    privates = Private.objects.all()
-    my_filter = PrivateFilter(request.GET, queryset=privates)
-    privates = my_filter.qs
-    return render(request,'forum/all_privates_view.html', {'privates': privates} )
-
-def add_recruit_view(request):
-    form = RecruitForm()
-    if request.method == "POST":
-        form = RecruitForm(request.POST)
-        if form.is_valid():
-            material = form.save(commit=False)
-            material.save()
-            messages.success(request, "Recruits has been added")
-            return redirect("forum:add_private_view")
-    return render(request, 'forum/create_private.html', {'form': form})
+        orders = paginator.page(1)
+    return render(request, 'forum/home.html', {'orders': orders})
 
 @login_required
 def make_order_for_private(request):
@@ -61,19 +39,31 @@ def make_order_for_private(request):
             return redirect("forum:make_order_for_soldier")
     return render(request, 'forum/make_order_for_recruit.html', {'form': form})
 
-
-def add_steamer(request):
-    form = SteamerForm()
-    if request.method == "POST":
-        form = SteamerForm(request.POST)
-        if form.is_valid():
-            material = form.save(commit=False)
-            material.save()
-            messages.success(request, "Steamer has been added")
-            return redirect("forum:add_steamer")
-    return render(request, 'forum/create_steamer.html', {'form': form})
-
-
 def list_of_all_orders(request):
     orders = Order.objects.all()
     return render(request,'forum/all_order_view.html', {'orders': orders} )
+
+
+
+@login_required
+def create_news_of_british_army(request):
+
+    if not request.user.can_create_news():
+        return HttpResponseForbidden("You don't have permission to create news.")
+
+    form = NewsForm()
+
+    if request.method == "POST":
+        form = NewsForm(request.POST)
+        if form.is_valid():
+            news = form.save(commit=False)
+            news.published_by = request.user
+            news.save()
+            messages.success(request, "The layer of magazine news has been added")
+            return redirect("forum:watching_news_of_british_army")
+    return render(request, 'forum/create_news_of_british_army.html', {'form': form})
+
+def watching_news_of_british_army(request):
+    news = News.objects.all()
+    return render(request,'forum/all_news.html', {'news': news} )
+

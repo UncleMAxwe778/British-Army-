@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}LIVE NEWS OF BA{% endblock %}
+
+{% block content %}
+{% for new in news %}
+<div class="container w-50">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ new.news_name }}</h5>
+      <p class="card-text">{{ new.description_of_news }}</p>
+      <p class="card-text">Rate: {{ new.rate_for_news }}</p>
+      <p class="card-text">By: {{ new.published_by }}</p>
+      <p class="card-text">Date: {{ new.data_giving }}</p>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="alert alert-info">
+  No news has been published yet.
+</div>
+{% endfor %}
+{% endblock %}
