@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'forum.apps.ForumConfig',
     "crispy_forms",
     "crispy_bootstrap5",
-    "user_officers"
+    "user_officers",
+    "captcha",
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,15 @@ AUTH_USER_MODEL = "user_officers.CustomUser"
 
 LOGIN_URL = "auth_officers:login"
 LOGOUT_REDIRECT_URL = "auth_officers:login"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+

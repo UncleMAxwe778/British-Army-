@@ -33,23 +33,32 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'forum:home_page' %}">Home</a>
                 </li>
+                {% if user.staff_for_create %}
                 <li class="nav-item">
-                    <a class="nav-link" href="">View Order</a>
+                    <a class="nav-link" href="{% url 'forum:list_of_all_orders' %}">View Order</a>
                 </li>
+                {% endif %}
                 <li class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                         Dropdown button
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'forum:watching_news_of_british_army' %}">News of BA</a></li>
+                        <li><a class="dropdown-item" href="{% url 'forum:watching_news_of_british_army' %}">News of
+                            BA</a></li>
                         {% if user.role == "PRESS" %}
-                        <li><a class="dropdown-item" href="{% url 'forum:create_news_of_british_army' %}">Create the news</a></li>
+                        <li><a class="dropdown-item" href="{% url 'forum:create_news_of_british_army' %}">Create the
+                            news</a></li>
                         {% endif %}
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="{% url 'forum:bucket_check_view' %}">
+                        🗒 Check Bucket
+                    </a>
                 </li>
                 <span class="navbar-text ms-auto">
 				{% if request.user.is_authenticated %}

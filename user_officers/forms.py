@@ -26,9 +26,13 @@ class CustomUserForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.role == "CTZ":
-            self.fields.pop('rank')
-            self.fields.pop('regiment')
-        if self.instance and self.instance.role == "PRESS":
-            self.fields.pop('rank')
-            self.fields.pop('regiment')
+
+        role = self.data.get("role") or getattr(self.instance, "role", None)
+
+        if role == "CTZ":
+            self.fields.pop("rank", None)
+            self.fields.pop("regiment", None)
+        if role == "PRESS":
+            self.fields.pop("rank", None)
+            self.fields.pop("regiment", None)
+        print("FIELDS AFTER:", self.fields.keys())

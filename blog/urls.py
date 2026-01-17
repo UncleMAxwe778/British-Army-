@@ -20,5 +20,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('forum/', include('forum.urls')),
-    path("auth_officers/", include('user_officers.urls', namespace="auth_officers"))
+    path("auth_officers/", include('user_officers.urls', namespace="auth_officers")),
+    path("captcha/", include("captcha.urls"))
 ]

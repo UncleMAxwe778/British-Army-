@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ news.news_name }}</h5>
+            <p class="card-text">{{ news.description_of_news }}</p>
+            <p class="card-text">Rate: {{ news.rate_for_news }}</p>
+            <p class="card-text">By: {{ news.published_by.last_name }}</p>
+            <p class="card-text">Date: {{ news.data_giving }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Check Bucket list</h2>
+
+{% if news %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Objects</th>
+            <th>info news</th>
+            <th>actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in news %}
+
+        <tr
+            {% if item.status == "NCHKY" %}
+                class="table-warning"
+            {% elif item.status == "NLN" %}
+                class="table-success"
+            {% endif %}
+        >
+            <td>{{ item.check_info_news.news_name }}</td>
+            <td>{{ item.check_info_news.description_of_news }} $</td>
+
+            <td>
+
+                {% if item.status == "NLN" %}
+                    <span class="badge bg-warning text-dark">
+                        In the line
+                    </span>
+
+                {% elif item.status == "APR" %}
+                    <span class="badge bg-success">
+                        Approved the info
+                    </span>
+
+                {% elif item.status == "NAPR" %}
+                    <span class="badge bg-success">
+                        Not Approved the info
+                    </span>
+
+                {% elif item.status == "NCHKY" %}
+                    <span class="badge bg-success">
+                        Not yet , wait for free line
+                    </span>
+
+                {% elif item.status == "CHKN" %}
+                    <span class="badge bg-success">
+                        Now is checking
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>The bucket is empty</p>
+{% endif %}
+
+{% endblock %}

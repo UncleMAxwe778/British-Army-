@@ -1,8 +1,9 @@
+import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import TextField
 from django.conf import settings
-
+from django.utils import timezone
 
 class Order(models.Model):
     name_order = models.CharField()
@@ -31,5 +32,32 @@ class News(models.Model):
         null=True,
         blank=True
     )
-    data_giving = models.DateTimeField()
+    data_giving = models.DateTimeField(default=timezone.now)
 
+
+
+class BusketCheck(models.Model):
+
+    STATUS = [
+        ("NAPR", "Not Approved"),
+        ("APR", "Approved"),
+        ("NLN", "In line"),
+        ("NCHKY", "not checked yet"),
+        ("CHKN", "Is checking now")
+    ]
+
+    published_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='user',
+        null=True,
+        blank=True
+    )
+    check_info_news = models.ForeignKey(
+        News,
+        on_delete=models.CASCADE,
+        related_name='news',
+        null=True,
+        blank=True
+    )
+    status = models.CharField(choices=STATUS, default="NCHKY")

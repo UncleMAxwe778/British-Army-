@@ -63,9 +63,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=75)
     last_name = models.CharField(max_length=95)
-    role = models.CharField(max_length=10,choices=ROLE_CHOICES, default="MLT",)
-    rank = models.CharField(max_length=10, choices=RANK_CHOICES, default="RCT")
-    regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES, default="BA")
+    role = models.CharField(max_length=10,choices=ROLE_CHOICES, default="MLT")
+    rank = models.CharField(max_length=10, choices=RANK_CHOICES, default="RCT", null=True, blank=True)
+    regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES, default="BA",  null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -74,7 +74,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return f"{self.email} {self.rank} {self.last_name} {self.regiment}"
+        return f"{self.email} {self.rank} {self.last_name} {self.regiment} {self.role}"
 
     def update_admin_status(self):
         highest_ranks = ["COL", "BRIG", "MG", "LG", "GEN"]
@@ -86,7 +86,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.is_superuser = False
         self.save()
 
-    def can_create_orders(self):
+    def staff_for_create(self):
         return self.rank in settings.ALLOWED_ORDER_RANKS
 
     def can_create_news(self):
