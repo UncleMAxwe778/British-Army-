@@ -21,7 +21,7 @@ class OrderForm(forms.ModelForm):
 
 class NewsForm(forms.ModelForm):
 
-    captcha = CaptchaField(label="Введіть код з картинки")
+    captcha = CaptchaField(label="Tap a code from the picture")
 
     class Meta:
         model = News

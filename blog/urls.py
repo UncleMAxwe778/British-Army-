@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from forum.api_views import api_ninja
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('forum/', include('forum.urls')),
     path("auth_officers/", include('user_officers.urls', namespace="auth_officers")),
-    path("captcha/", include("captcha.urls"))
+    path("captcha/", include("captcha.urls")),
+    path("api_ninja/", api_ninja.urls)
 ]
