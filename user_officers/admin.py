@@ -1,9 +1,13 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
 
 @admin.register(CustomUser)
-class AdminUser(admin.ModelAdmin):
+class CustomUserAdmin(admin.ModelAdmin):
+
+    ordering = ("email",)
+
     list_display = (
         "id",
         "email",

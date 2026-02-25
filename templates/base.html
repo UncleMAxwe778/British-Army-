@@ -8,9 +8,15 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>British Army</title>
 </head>
+
+
 <body>
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" href="{% static 'css/message_list.css' %}">
+<div id="notification-container"></div>
 <script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/message_list_v3.js' %}"></script>
+
 {% if messages %}
 <div class="container mt-3">
     {% for message in messages %}
@@ -21,10 +27,22 @@
     {% endfor %}
 </div>
 {% endif %}
+{% if notifications_count > 0 %}
+<div class="badge">
+    🔔 {{ notifications_count }}
+</div>
 
+{% for notification in global_notifications %}
+<div class="alert alert-info" id="notification-{{ notification.id }}">
+    {{ notification.name_message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" data-id="{{ notification.id }}" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+{% endif %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand bold" href="{% url 'forum:home_page' %}">
+        <a class="navbar-brand mb-0 h1" href="{% url 'forum:home_page' %}">
             <img src="https://flagcdn.com/gb.svg" alt="UK Flag" width="30" height="30">British Army
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -41,10 +59,10 @@
                     <a class="nav-link" href="{% url 'forum:list_of_all_orders' %}">View Order</a>
                 </li>
                 {% endif %}
-                <li class="dropdown">
+                <li class="nav-item dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
-                        Dropdown button
+                        News Reporting
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'forum:watching_news_of_british_army' %}">News of
@@ -57,11 +75,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="{% url 'forum:bucket_check_view' %}">
-                        🗒 Check Bucket
-                    </a>
                 </li>
                 <span class="navbar-text ms-auto">
 				{% if request.user.is_authenticated %}

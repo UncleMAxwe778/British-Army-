@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% block title %}UNREAD NOTIFICATIONS{% endblock %}
+
+<h2> Unread notifications </h2>
+
+
+
+{% block content %}
+<h2>My Messages</h2>
+
+<ul>
+  {% for msg in mesages %}
+    <li>
+      <strong>{{ msg.name_message }}</strong>: {{ msg.whole_message }}
+      <small>({{ msg.data_giving|date:"H:i d-m-Y" }})</small>
+    </li>
+  {% empty %}
+    <li>No unread notifications.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

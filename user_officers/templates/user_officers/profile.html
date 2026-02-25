@@ -1,24 +1,69 @@
 {% extends 'base.html'%}
 {% load crispy_forms_tags %}
-
+{% load static %}
 
 {% block content %}
 <div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-body p-4">
-          <h3 class="mb-4 text-center">Your Military Card(Profile)</h3>
-          <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary mt-3">Save changes</button>
+    <div class="row justify-content-center align-items-start">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="mb-4 text-center">Your Military Card(Profile)</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary mt-3">Save changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </form>
         </div>
-      </div>
+        {% if user.role == "MLT" %}
+        <div class="col-md-2 mb-3">
+            <div class="card shadow-lg border-0 rounded-4 text-center">
+                <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
+
+                    {% if user.regiment == "BMP" %}
+                    <img src="{% static 'images_of_regiment/rmp.png' %}"
+                         alt="RMP Badge"
+                         class="img-fluid rounded"
+                         style="width:100px; height:100px;">
+
+                    {% elif user.regiment == "MPR" %}
+                    <img src="{% static 'images_of_regiment/mpr.png' %}"
+                         alt="MPR Badge"
+                         class="img-fluid rounded"
+                         style="width:100px; height:100px;">
+
+                    {% elif user.regiment == "RM" %}
+                    <img src="{% static 'images_of_regiment/mc.png' %}"
+                         alt="Royal Marines Badge"
+                         class="img-fluid rounded"
+                         style="width:100px; height:100px;">
+
+                    {% elif user.regiment == "BA" %}
+                    <img src="https://flagcdn.com/gb.svg"
+                         alt="British Army"
+                         class="img-fluid rounded"
+                         style="width:100px; height:100px;">
+
+                    {% elif user.regiment == "UKSF" %}
+                    <img src="{% static 'images_of_regiment/uksf.png' %}"
+                         alt="UKSF"
+                         class="img-fluid rounded"
+                         style="width:100px; height:100px;">
+
+                    {% else %}
+                    <p class="fw-bold mb-0">No Regiment Image</p>
+                    {% endif %}
+
+                    <p class="mt-2 mb-0">{{ user.rank }}</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
     </div>
-  </div>
 </div>
 {% endblock %}

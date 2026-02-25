@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% for rqst in reviews %}
+<div class="card mb-3" id="request-{{ rqst.id }}">
+    <div class="card-body">
+        <h5 class="card-title">{{ rqst.request.title }}</h5>
+        <p>{{ rqst.request.description }}</p>
+        <p>Status: <span id="status-{{ rqst.id }}">{{ rqst.request.current_status }}</span></p>
+        <button type="button" data-decision="APPROVE" data-id="{{ rqst.id }}" class="btn btn-success btn-sm">
+            Approve
+        </button>
+        <button type="button" data-decision="REJECT" data-id="{{ rqst.id }}" class="btn btn-danger btn-sm">
+            Reject
+        </button>
+    </div>
+</div>
+{% empty %}
+<div class="alert alert-info">
+    No requests have been published yet.
+</div>
+{% endfor %}
+
+{% endblock %}

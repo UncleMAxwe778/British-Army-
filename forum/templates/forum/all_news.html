@@ -14,11 +14,6 @@
             <p class="card-text">Date: {{ new.data_giving }}</p>
         </div>
         <div><a href="{% url 'forum:news_by_detail' new.id %}">More Details right about the news right here</a></div>
-        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center">
-                <a class="btn btn-outline-primary mt-auto js-loading" href="add_news_to_check_bucket/{{new.id}}">For Checking</a>
-            </div>
-        </div>
     </div>
 </div>
 {% empty %}

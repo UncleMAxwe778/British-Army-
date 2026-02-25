@@ -1,8 +1,10 @@
 from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Order, News
+from django.template.context_processors import request
 
+from .models import Order, News, Request
+from user_officers.models import CustomUser
 
 
 class OrderForm(forms.ModelForm):
@@ -33,5 +35,20 @@ class NewsForm(forms.ModelForm):
         news.save()
         return news
 
+
+
+class RequestForm(forms.ModelForm):
+
+    class Meta:
+        model = Request
+        fields = ("title", "description", "assigned_officer")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["assigned_officer"].queryset = CustomUser.objects.filter(
+            role="MLT",
+            rank__in=["COL", "BRIG","MG", "LG", "GEN"]
+        )
 
 

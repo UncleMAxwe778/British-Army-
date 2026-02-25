@@ -55,7 +55,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ("RAC", "Royal Armoured Corps"),
         ("BMP", " British Military Police"),
         ("RM", "Royal Marines"),
-        ("AAB", "Assault Airborne Battalion"),
+        ("MPR", "Military Parachute Regiment"),
         ("UKSF", "United Kingdom Special Forces"),
     ]
 
@@ -74,7 +74,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return f"{self.email} {self.rank} {self.last_name} {self.regiment} {self.role}"
+        return f" {self.first_name} {self.last_name} {self.email} {self.rank} {self.regiment} {self.role}"
 
     def update_admin_status(self):
         highest_ranks = ["COL", "BRIG", "MG", "LG", "GEN"]
@@ -84,10 +84,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         else:
             self.is_staff = False
             self.is_superuser = False
-        self.save()
 
     def staff_for_create(self):
         return self.rank in settings.ALLOWED_ORDER_RANKS
 
     def can_create_news(self):
         return self.role in settings.ALLOWED_NEWS_ROLES
+
+    def save(self, *args, **kwargs):
+        self.update_admin_status()
+        super().save(*args, **kwargs)

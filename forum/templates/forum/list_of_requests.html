@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}REQUESTS{% endblock %}
+
+{% block content %}
+{% for rqst in requests %}
+<div class="container px-4 px-lg-5 mt-5 fade-in">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ rqst.title }}</h5>
+            <p class="card-text">{{ rqst.description }}</p>
+            <p class="card-text">Status: {{ rqst.current_status }}</p>
+            <p class="card-text">By: {{ rqst.creator.last_name }}</p>
+            <p class="card-text">Date: {{ rqst.created_at }}</p>
+        </div>
+        {% if user.staff_for_create %}
+        <div class="text-center">
+                <a class="btn btn-outline-primary mt-auto js-loading" href="add-request-to-review-list/{{rqst.id}}">For Checking</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="alert alert-info">
+    No requests has been published yet.
+</div>
+{% endfor %}
+{% endblock %}
