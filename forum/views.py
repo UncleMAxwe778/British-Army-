@@ -13,8 +13,8 @@ from django.http import JsonResponse
 from django.db.models import Q
 import json
 
-from .forms import OrderForm, NewsForm, RequestForm
-from .models import Order, News, Request, MessageList, ReviewerOfRequest
+from .forms import OrderForm, NewsForm, RequestForm, OperationForm
+from .models import Order, News, Request, MessageList, ReviewerOfRequest, Operation, CircleData
 from .filters import PrivateFilter
 import logging
 from user_officers.models import CustomUser
@@ -93,6 +93,9 @@ def news_by_detail(request, news_id):
     return render(request, 'forum/news_by_detail.html', {'news': news})
 
 
+
+
+#Messages
 @login_required
 def unread_notifications(request):
     messages = MessageList.objects.filter(
@@ -115,6 +118,9 @@ def mark_notification_read(request, pk):
     return JsonResponse({'success': False, 'error': 'Not authenticated'}, status=403)
 
 
+
+
+#Requests
 @login_required
 def request_as_a_user(request):
     form = RequestForm()
@@ -196,3 +202,66 @@ def review_action(request, request_id):
 
         return JsonResponse({"new_status": reviewer_obj.decision})
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+
+#Map with Operations
+@login_required
+def make_the_operation(request):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to those actions.")
+
+    form = OperationForm()
+
+    if request.method == "POST":
+        form = OperationForm(request.POST)
+        if form.is_valid():
+            operation = form.save(commit=False)
+            operation.save()
+            messages.success(request, "Operation has been added")
+            return redirect("forum:make_order_for_soldier")
+    return render(request, 'forum/create_operation.html', {'form': form})
+
+
+
+@login_required
+def create_circle(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        lat = data.get("latitude")
+        lng = data.get("longitude")
+        operation_id = data.get("operation_id")
+
+        operation = Operation.objects.get(id=operation_id)
+
+        circle = CircleData.objects.create(
+            latitude=lat,
+            longitude=lng,
+            operation=operation
+        )
+
+        return JsonResponse({
+            "id": circle.id,
+            "latitude": circle.latitude,
+            "longitude": circle.longitude,
+            "operation": circle.operation
+        })
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@login_required
+def map_of_uk_view(request):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to those actions.")
+
+    operations = Operation.objects.all()
+    circles = CircleData.objects.all()
+    return render(request, "forum/uk_map.html", {"operations": operations, "circles": circles})
+
+
+
+
+
+
+
+

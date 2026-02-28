@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.template.context_processors import request
 
-from .models import Order, News, Request
+from .models import Order, News, Request, Operation
 from user_officers.models import CustomUser
 
 
@@ -52,3 +52,15 @@ class RequestForm(forms.ModelForm):
         )
 
 
+
+class OperationForm(forms.ModelForm):
+
+    class Meta:
+        model = Operation
+        fields = ("name","description", "region", "status")
+
+    def save(self, commit=True):
+        operation = super().save(commit=False)
+        operation.is_active = True
+        operation.save()
+        return operation

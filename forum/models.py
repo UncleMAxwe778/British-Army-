@@ -19,7 +19,7 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-    data_giving = models.DateTimeField()
+    data_giving = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return F"{self.name_order} {self.user} {self.data_giving}"
@@ -118,3 +118,58 @@ class ReviewerOfRequest(models.Model):
 
     def __str__(self):
         return self.decision
+
+
+class Operation(models.Model):
+    STATUS_CHOICES = [
+        ('PLANNED', 'Planned'),
+        ('ACTIVE', 'Active'),
+        ('COMPLETED', 'Completed'),
+        ('ABORTED', 'Aborted')
+    ]
+    REGION_OF_UK = [
+        ('SCOTLAND', 'Scotland'),
+        ('ENGLAND', 'England'),
+        ('WALES', 'Wales'),
+        ('NI','North Ireland')
+    ]
+
+
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    region = models.CharField(
+        max_length=20,
+        choices=REGION_OF_UK,
+        default='ENGLAND'
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='PLANNED'
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='operations',
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return F"{self.name} {self.description} {self.region} {self.status} {self.created_by}"
+
+class CircleData(models.Model):
+    circle_id = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    operation = models.ForeignKey(
+        Operation,
+        on_delete=models.CASCADE,
+        related_name="circles",
+        null=True,
+        blank=True
+    )
+    class Meta:
+        ordering = ['-timestamp']

@@ -4,7 +4,7 @@ from .views import (home, make_order_for_private, list_of_all_orders, create_new
                     news_by_detail, unread_notifications, request_as_a_user, list_of_requests,
                     add_request_to_review_list,
                     review_dashboard,
-                    mark_notification_read, review_action
+                    mark_notification_read, review_action, map_of_uk_view, create_circle, make_the_operation
                     )
 
 
@@ -23,5 +23,8 @@ urlpatterns = [
     path('list-of-requests/', list_of_requests, name='list_of_requests'),
     path('list-of-requests/add-request-to-review-list/<int:request_id>/', add_request_to_review_list, name='add_request_to_review_list'),
     path('review-dashboard/', review_dashboard, name='review_dashboard'),
-    path('review-dashboard/review-action/<int:request_id>/', review_action, name='review_action')
+    path('review-dashboard/review-action/<int:request_id>/', review_action, name='review_action'),
+    path('uk-map/', map_of_uk_view, name='map_of_uk_view'),
+    path('create-circle/', create_circle, name='create_circle'),
+    path('create-operation/', make_the_operation, name='make_the_operation')
 ]

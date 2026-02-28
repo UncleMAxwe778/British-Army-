@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div style="display: flex; height: 90vh; gap: 10px;">
+
+    <!-- LEFT SIDEBAR: Control Panel -->
+    <div id="sidebar" style="width: 300px; padding: 15px; border: 1px solid #ccc; border-radius: 5px;">
+        <h3>Circle Control Panel</h3>
+
+        <label for="operation-select">Choose Operation:</label>
+        <select id="operation-select" style="width: 100%; margin-bottom: 10px;">
+            {% for op in operations %}
+            <option value="{{ op.id }}">{{ op }}</option>
+            {% endfor %}
+        </select>
+
+        <input id="circle-value" type="text" placeholder="Circle value" style="width: 100%; margin-bottom: 10px;">
+
+        <button id="create-circle" type="submit" style="width: 100%; margin-bottom: 10px;">Create Circle</button>
+
+
+
+
+        <p id="status-text"></p>
+    </div>
+
+    <!-- RIGHT: Map Container -->
+    <div id="map-container" style="position: relative; flex: 1; border: 1px solid #ccc; border-radius: 5px;">
+        <img src="{% static 'map_of_uk/uk_map_3.png' %}" alt="UK Map" style="width: 100%; height: 100%;">
+    </div>
+
+</div>
+
+<!-- Tooltip div -->
+<div id="tooltip" style="
+    position: absolute;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none;
+    pointer-events: none;
+    z-index: 1000;
+"></div>
+
+<!-- JS for clicking & creating circles -->
+<script>
+    let createMode = false;
+
+    const mapContainer = document.getElementById("map-container");
+    const statusText = document.getElementById("status-text");
+    const tooltip = document.getElementById("tooltip");
+
+    document.getElementById("create-circle").addEventListener("click", () => {
+        createMode = true;
+        statusText.innerText = "Click on the map to place a circle.";
+    });
+
+    // Store created circles
+    const circles = {};
+
+    mapContainer.addEventListener("click", function(e) {
+        if (!createMode) return;
+
+        // Calculate position relative to map container
+        const rect = mapContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const operationId = document.getElementById("operation-select").value;
+        const value = document.getElementById("circle-value").value;
+
+        // Create circle div
+        const circle = document.createElement("div");
+        circle.classList.add("circle");
+        circle.style.position = "absolute";
+        circle.style.width = "20px";
+        circle.style.height = "20px";
+        circle.style.borderRadius = "50%";
+        circle.style.backgroundColor = "red";
+        circle.style.left = `${x - 10}px`; // center circle
+        circle.style.top = `${y - 10}px`;  // center circle
+        circle.style.cursor = "pointer";
+
+        // Tooltip on hover
+        circle.addEventListener("mouseenter", function(ev) {
+            tooltip.innerText = `Operation ID: ${operationId}\nValue: ${value}`;
+            tooltip.style.left = ev.pageX + "px";
+            tooltip.style.top = ev.pageY + "px";
+            tooltip.style.display = "block";
+        });
+
+        circle.addEventListener("mousemove", function(ev) {
+            tooltip.style.left = ev.pageX + "px";
+            tooltip.style.top = ev.pageY + "px";
+        });
+
+        circle.addEventListener("mouseleave", function() {
+            tooltip.style.display = "none";
+        });
+
+        // Append to map container
+        mapContainer.appendChild(circle);
+
+        // Optional: store circle for removal
+        const circleId = Date.now();
+        circles[circleId] = circle;
+
+        statusText.innerText = "Circle created!";
+        createMode = false;
+    });
+</script>
+
+{% endblock %}
