@@ -228,26 +228,44 @@ def make_the_operation(request):
 def create_circle(request):
     if request.method == "POST":
         data = json.loads(request.body)
-
-        lat = data.get("latitude")
-        lng = data.get("longitude")
+        x = data.get("x")
+        y = data.get("y")
         operation_id = data.get("operation_id")
+        value = data.get("value")
 
         operation = Operation.objects.get(id=operation_id)
 
         circle = CircleData.objects.create(
-            latitude=lat,
-            longitude=lng,
-            operation=operation
+            operation=operation,
+            value=value,
+            x=x,
+            y=y
         )
 
         return JsonResponse({
             "id": circle.id,
-            "latitude": circle.latitude,
-            "longitude": circle.longitude,
-            "operation": circle.operation
+            "operation": circle.operation.name,
+            "value": circle.value,
+            "x": circle.x,
+            "y": circle.y
         })
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+@login_required
+def get_circles(request):
+    circles = CircleData.objects.all()
+    data = []
+    for c in circles:
+        data.append({
+            "id": c.id,
+            "operation_name":c.operation.name,
+            "value": c.value,
+            "x": c.x,
+            "y": c.y
+        })
+    return JsonResponse(data, safe=False)
+
 
 @login_required
 def map_of_uk_view(request):

@@ -93,4 +93,26 @@ function markAsRead(notificationId) {
     .catch(err => console.error(err));
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("button[data-decision]").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const requestId = this.dataset.id;
+            const decision = this.dataset.decision;
 
+            fetch(`/forum/review-dashboard/review-action/${requestId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ decision: decision })
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById(`status-${requestId}`).innerText = data.new_status;
+            })
+            .catch(err => console.error(err));
+        });
+    });
+});

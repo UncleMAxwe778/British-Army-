@@ -137,8 +137,6 @@ class Operation(models.Model):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
     region = models.CharField(
         max_length=20,
         choices=REGION_OF_UK,
@@ -162,8 +160,10 @@ class Operation(models.Model):
         return F"{self.name} {self.description} {self.region} {self.status} {self.created_by}"
 
 class CircleData(models.Model):
-    circle_id = models.IntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    value = models.CharField(max_length=255, null=True, blank=True)
+    x = models.FloatField(null=True, blank=True)
+    y = models.FloatField(null=True, blank=True)
     operation = models.ForeignKey(
         Operation,
         on_delete=models.CASCADE,
@@ -173,3 +173,6 @@ class CircleData(models.Model):
     )
     class Meta:
         ordering = ['-timestamp']
+
+    def __str__(self):
+        return F"{self.operation} {self.value} {self.x} {self.y} {self.timestamp}"
