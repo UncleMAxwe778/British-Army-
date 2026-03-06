@@ -2,6 +2,168 @@
 
 {% block content %}
 
+<style>
 
-<h1>The update is gonna be soon for this page</h1>
+    body{
+        background:#f4f4f4;
+    }
+
+    /* MILITARY HEADER */
+
+    .military-header{
+        width: 100%; /* full width */
+        background: linear-gradient(90deg,#2e3b2c,#3d5138);
+        color:white;
+        padding:30px 0; /* top/bottom only */
+        text-align:center;
+        border-bottom:5px solid #c2a35c;
+    }
+
+    .military-header .header-inner{
+        padding: 0 120px; /* optional horizontal padding */
+    }
+
+    .military-header h1{
+        font-family:Impact, Arial Black, sans-serif;
+        letter-spacing:5px;
+        font-size:50px;
+        margin:0;
+    }
+
+    .flag-icon{
+        margin:0 10px;
+    }
+
+    /* SECTION TITLE */
+
+    .section-title{
+        font-weight:bold;
+        letter-spacing:2px;
+        color:#2e3b2c;
+    }
+
+    /* NEWS SCROLL */
+
+    .news-scroll{
+        scroll-behavior:smooth;
+    }
+
+    /* NEWS CARD */
+
+    .news-card{
+        min-width:320px;
+        max-width:320px;
+        border-radius:10px;
+        border:none;
+        transition:0.3s;
+    }
+
+    .news-card:hover{
+        transform:translateY(-6px);
+        box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* NEWS META */
+
+    .news-meta{
+        font-size:13px;
+        color:gray;
+    }
+
+</style>
+
+
+<!-- HEADER -->
+
+<div class="military-header">
+    <div class="header-inner">
+        <h1>
+            BA
+            <img src="https://flagcdn.com/gb.svg" width="80" class="flag-icon"> |
+            HOME
+        </h1>
+        <p>Official British Army Portal (but not really official)</p>
+    </div>
+</div>
+
+
+<!-- NEWS SECTION -->
+
+<div class="container mt-5">
+
+    <h2 class="section-title mb-4">Range of the News</h2>
+
+    <div class="d-flex overflow-auto pb-4 news-scroll">
+
+        {% for new in news|slice:":6" %}
+
+        <div class="card news-card me-4 shadow-sm">
+
+            <div class="card-body">
+
+                <h5 class="card-title">{{ new.news_name }}</h5>
+
+                <p class="news-meta">
+                    By {{ new.published_by }} • {{ new.data_giving|date:"M d, Y" }}
+                </p>
+
+                <p class="card-text">
+                    {{ new.description_of_news|truncatewords:20 }}
+                </p>
+
+                <span class="badge bg-success">
+                    Rating {{ new.rate_for_news }}
+                </span>
+
+            </div>
+
+            <div class="card-footer bg-white border-0">
+
+                <a href="{% url 'forum:news_by_detail' new.id %}"
+                   class="btn btn-dark btn-sm w-100">
+                    Read Full Report
+                </a>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>No news available.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<div class="container mt-4">
+    <h3 class="section-title mb-4">Appeal to High Staff for Help – or Just Request</h3>
+
+    <div class="card mb-3 shadow-sm" style="border-radius:10px; max-width:900px;">
+        <div class="card-body d-flex align-items-center">
+
+            <div class="me-4" style="flex:1;">
+                <h5 class="card-title">Submit Your Request</h5>
+                <p class="news-meta">
+                    Redirecting to high-level personnel. Treat your request with respect.
+                </p>
+                <p class="card-text">
+                    You can submit an appeal or a request here. Make sure to include all details clearly.
+                </p>
+                <span class="badge bg-primary">Requests</span>
+            </div>
+
+            <div style="flex-shrink:0;">
+                <a href="{% url 'forum:request_as_a_user' %}" class="btn btn-dark btn-lg">
+                    Go to Requests
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 {% endblock %}

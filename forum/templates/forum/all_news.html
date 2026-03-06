@@ -13,7 +13,11 @@
             <p class="card-text">By: {{ new.published_by }}</p>
             <p class="card-text">Date: {{ new.data_giving }}</p>
         </div>
-        <div><a href="{% url 'forum:news_by_detail' new.id %}">More Details right about the news right here</a></div>
+        <div class="card-footer">
+            <a href="{% url 'forum:news_by_detail' new.id %}" class="btn btn-primary">
+                Read More
+            </a>
+        </div>
     </div>
 </div>
 {% empty %}

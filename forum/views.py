@@ -21,13 +21,14 @@ from user_officers.models import CustomUser
 
 logger = logging.getLogger(__name__)
 
-
+# Index
 def greetings_view(request):
     return render(request, "forum/index.html")
 
-
+# Home
 def home(request):
-    return render(request, 'forum/home.html')
+    news = News.objects.all()
+    return render(request, 'forum/home.html', {'news': news})
 
 #Orders
 
@@ -193,7 +194,7 @@ def request_as_a_user(request):
             requestt.creator = request.user
             requestt.save()
             messages.success(request, "Your request is successfully issued")
-            return redirect("forum:request_as_a_user")
+            return redirect("forum:list_of_requests")
     return render(request, 'forum/create_request.html', {'form': form})
 
 

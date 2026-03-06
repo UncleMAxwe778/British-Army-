@@ -140,15 +140,17 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'forum:home_page' %}">Home</a>
                 </li>
 
-
+                {% if user.role == "MLT" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'forum:list_of_all_orders' %}">View Orders</a>
                 </li>
+                {% endif %}
 
-
+                {% if user.role == "MLT" %}
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'forum:selection_list' %}">Selections</a>
                 </li>
+                {% endif %}
 
                 <!-- Dropdown for news reporting -->
                 <li class="nav-item dropdown">
@@ -204,34 +206,34 @@
                         </div>
                     </div>
                 </div>
-                    <!-- Inbox button -->
-                    {% if notifications_count > 0 %}
-                    <a href="{% url 'forum:unread_notifications' %}" class="btn btn-primary position-relative">
-                        Inbox
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <!-- Inbox button -->
+                {% if notifications_count > 0 %}
+                <a href="{% url 'forum:unread_notifications' %}" class="btn btn-primary position-relative">
+                    Inbox
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
             {{ notifications_count }}
             <span class="visually-hidden">unread messages</span>
                     </span>
-                    </a>
-                    {% else %}
-                    <a href="{% url 'forum:unread_notifications' %}" class="btn btn-primary">Inbox</a>
-                    {% endif %}
+                </a>
+                {% else %}
+                <a href="{% url 'forum:unread_notifications' %}" class="btn btn-primary">Inbox</a>
+                {% endif %}
 
-                    <!-- Profile / Auth buttons -->
-                    {% if request.user.is_authenticated %}
-                    <a class="btn btn-outline-primary" href="{% url 'auth_officers:profile_view' %}">Profile</a>
-                    <form method="post" action="{% url 'auth_officers:logout' %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-danger">Logout</button>
-                    </form>
-                    {% else %}
-                    <a class="btn btn-outline-success" href="{% url 'auth_officers:register_view' %}">Register</a>
-                    <a class="btn btn-outline-primary" href="{% url 'auth_officers:login' %}">Login</a>
-                    {% endif %}
+                <!-- Profile / Auth buttons -->
+                {% if request.user.is_authenticated %}
+                <a class="btn btn-outline-primary" href="{% url 'auth_officers:profile_view' %}">Profile</a>
+                <form method="post" action="{% url 'auth_officers:logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
+                {% else %}
+                <a class="btn btn-outline-success" href="{% url 'auth_officers:register_view' %}">Register</a>
+                <a class="btn btn-outline-primary" href="{% url 'auth_officers:login' %}">Login</a>
+                {% endif %}
 
-                </div>
             </div>
         </div>
+    </div>
 </nav>
 
 <div class="container mt-4">
