@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
 
@@ -91,6 +92,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def can_create_news(self):
         return self.role in settings.ALLOWED_NEWS_ROLES
 
+    def only_for_military(self):
+        return self.role in settings.ALLOWED_ONLY_MILITARY
+
     def save(self, *args, **kwargs):
         self.update_admin_status()
         super().save(*args, **kwargs)
+
+    def clean(self):
+        super().clean()
+
+        # Citizens & Press should NOT have military data
+        if self.role in ["CTZ", "PRESS"]:
+            self.rank = None
+            self.regiment = None
+

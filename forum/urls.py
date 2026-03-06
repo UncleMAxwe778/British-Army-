@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import (home, make_order_for_private, list_of_all_orders, create_news_of_british_army,
+from .views import ( home, make_order_for_private, list_of_all_orders, create_news_of_british_army,
                     watching_news_of_british_army,
                     news_by_detail, unread_notifications, request_as_a_user, list_of_requests,
                     add_request_to_review_list,
                     review_dashboard,
-                    mark_notification_read, review_action, map_of_uk_view, create_circle, get_circles, make_the_operation
+                    mark_notification_read, review_action, map_of_uk_view, create_circle, get_circles, delete_circle, make_the_operation,
+                    list_of_operations, delete_operation, operation_edit, selection_list, sign_up_selection, create_selection, remove_recruit_from_selection, delete_selection
                     )
 
 
@@ -27,5 +28,14 @@ urlpatterns = [
     path('uk-map/', map_of_uk_view, name='map_of_uk_view'),
     path('create-circle/', create_circle, name='create_circle'),
     path('get-circles/', get_circles, name='get_circles'),
-    path('create-operation/', make_the_operation, name='make_the_operation')
+    path('delete-circle/<int:circle_id>/', delete_circle, name='delete_circle'),
+    path('operation/<int:operation_id>/delete/', delete_operation, name='delete_operation'),
+    path('create-operation/', make_the_operation, name='make_the_operation'),
+    path('operations/', list_of_operations, name="list_of_operations"),
+    path('operation/<int:operation_id>/edit/', operation_edit, name='operation_edit'),
+    path('selections/', selection_list, name='selection_list'),
+    path('selections/sign-up/<int:selection_id>', sign_up_selection, name='sign_up_selection'),
+    path('create-selection/', create_selection, name='create_selection'),
+    path('selections/remove/<int:selection_id>/', remove_recruit_from_selection, name='remove_recruit_from_selection'),
+    path('selection/<int:selection_id>/delete/', delete_selection, name='delete_selection'),
 ]

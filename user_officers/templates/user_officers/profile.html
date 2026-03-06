@@ -1,24 +1,74 @@
 {% extends 'base.html'%}
-{% load crispy_forms_tags %}
 {% load static %}
 
 {% block content %}
+
 <div class="container py-5">
-    <div class="row justify-content-center align-items-start">
-        <div class="col-md-6 mb-3">
-            <div class="card shadow-lg border-0 rounded-4">
+
+    <div class="row justify-content-center g-4 align-items-stretch">
+
+        <!-- PROFILE CARD -->
+        <div class="col-lg-7 col-md-10">
+            <div class="card profile-card border-0 shadow-lg rounded-4 overflow-hidden">
+
+
+                <div class="profile-header text-white text-center py-4">
+                    <h3 class="mb-1">{{ user.rank }} {{ user.first_name }} {{ user.last_name }}</h3>
+                    <small class="opacity-75">{{ user.regiment }}</small>
+                </div>
+
                 <div class="card-body p-4">
-                    <h3 class="mb-4 text-center">Your Military Card(Profile)</h3>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary mt-3">Save changes</button>
+
+                    <div class="row text-center mb-4">
+                        <div class="col">
+                            <h6 class="text-muted">Role</h6>
+                            <span class="badge bg-dark px-3 py-2">{{ user.role }}</span>
                         </div>
-                    </form>
+                        <div class="col">
+                            <h6 class="text-muted">Email</h6>
+                            <small>{{ user.email }}</small>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row gy-2">
+                        <div class="col-6">
+                            <strong>First Name</strong>
+                            <p class="mb-0 text-muted">{{ user.first_name }}</p>
+                        </div>
+
+                        <div class="col-6">
+                            <strong>Last Name</strong>
+                            <p class="mb-0 text-muted">{{ user.last_name }}</p>
+                        </div>
+
+                        {% if user.role == "MLT" %}
+                        <div class="col-6">
+                            <strong>Rank</strong>
+                            <p class="mb-0 text-muted">{{ user.rank }}</p>
+                        </div>
+
+                        <div class="col-6">
+                            <strong>Regiment</strong>
+                            <p class="mb-0 text-muted">{{ user.regiment }}</p>
+                        </div>
+                        {% else %}
+                        {% endif %}
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a class="btn btn-military px-4"
+                           href="{% url 'auth_officers:profile_edit' %}">
+                            Edit Profile
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
+
+        <!-- REGIMENT BADGE -->
         {% if user.role == "MLT" %}
         <div class="col-md-2 mb-3">
             <div class="card shadow-lg border-0 rounded-4 text-center">
@@ -65,5 +115,7 @@
         {% else %}
         {% endif %}
     </div>
+
 </div>
+
 {% endblock %}

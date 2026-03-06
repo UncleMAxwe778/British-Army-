@@ -16,7 +16,6 @@
             {% endfor %}
         </select>
 
-        <input id="circle-value" type="text" placeholder="Circle value" style="width: 100%; margin-bottom: 10px;">
 
         <button id="create-circle" type="submit" style="width: 100%; margin-bottom: 10px;">Create Circle</button>
 
@@ -79,11 +78,12 @@ fetch("/forum/get-circles/")
     .then(res => res.json())
     .then(data => {
         data.forEach(c => {
-            createCircleDiv(c.x, c.y, c.operation_name, c.value);
+            createCircleDiv(c.x, c.y, c.operation_name, c.id); // pass id
         });
     });
 
-function createCircleDiv(x, y, operationName, value) {
+
+function createCircleDiv(x, y, operationName, id) {
     const circle = document.createElement("div");
     circle.style.position = "absolute";
     circle.style.width = "20px";
@@ -94,9 +94,12 @@ function createCircleDiv(x, y, operationName, value) {
     circle.style.top = `${y - 10}px`;
     circle.style.cursor = "pointer";
 
-    // Tooltip
+
+    circle.dataset.id = id;
+
+
     circle.addEventListener("mouseenter", function(ev) {
-        tooltip.innerText = `Operation: ${operationName}\nValue: ${value}\nX axis: ${x}\nY axis: ${y}`;
+        tooltip.innerText = `Operation: ${operationName}\nX axis: ${x}\nY axis: ${y}`;
         tooltip.style.left = ev.pageX + "px";
         tooltip.style.top = ev.pageY + "px";
         tooltip.style.display = "block";
@@ -109,14 +112,38 @@ function createCircleDiv(x, y, operationName, value) {
         tooltip.style.display = "none";
     });
 
+=
+    circle.addEventListener("contextmenu", function(e) {
+        e.preventDefault(); // prevent default right-click menu
+
+        if (!confirm("Delete this circle?")) return;
+
+        fetch(`/forum/delete-circle/${circle.dataset.id}/`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                circle.remove();
+                statusText.innerText = "Circle deleted!";
+            } else {
+                alert("Failed to delete circle.");
+            }
+        });
+    });
+
     mapContainer.appendChild(circle);
 }
 
-
+=
 document.getElementById("create-circle").addEventListener("click", () => {
     createMode = true;
     statusText.innerText = "Click on the map to place a circle.";
 });
+
 
 mapContainer.addEventListener("click", function(e) {
     if (!createMode) return;
@@ -124,24 +151,23 @@ mapContainer.addEventListener("click", function(e) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const operationId = document.getElementById("operation-select").value;
-    const value = document.getElementById("circle-value").value;
-
 
     fetch("/forum/create-circle/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
+            "X-CSRFToken": getCookie('csrftoken')
         },
-        body: JSON.stringify({x, y, operation_id: operationId, value})
+        body: JSON.stringify({x, y, operation_id: operationId})
     })
     .then(res => res.json())
     .then(data => {
-        createCircleDiv(x, y, data.operation_name, data.value);
+        createCircleDiv(x, y, data.operation_name, data.id); // pass the id here
         statusText.innerText = "Circle created and saved!";
         createMode = false;
     });
 });
+
 </script>
 
 {% endblock %}

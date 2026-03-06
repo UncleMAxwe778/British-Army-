@@ -13,8 +13,8 @@ from django.http import JsonResponse
 from django.db.models import Q
 import json
 
-from .forms import OrderForm, NewsForm, RequestForm, OperationForm
-from .models import Order, News, Request, MessageList, ReviewerOfRequest, Operation, CircleData
+from .forms import OrderForm, NewsForm, RequestForm, OperationForm, RegimentSelectionForm
+from .models import Order, News, Request, MessageList, ReviewerOfRequest, Operation, CircleData, RegimentSelection
 from .filters import PrivateFilter
 import logging
 from user_officers.models import CustomUser
@@ -22,18 +22,14 @@ from user_officers.models import CustomUser
 logger = logging.getLogger(__name__)
 
 
-def home(request):
-    order_list = Order.objects.all()
-    paginator = Paginator(order_list, 1)
-    page_number = request.GET.get('page', 1)
-    try:
-        orders = paginator.page(page_number)
-    except EmptyPage:
-        orders = paginator.page(paginator.num_pages)
-    except PageNotAnInteger:
-        orders = paginator.page(1)
-    return render(request, 'forum/home.html', {'orders': orders})
+def greetings_view(request):
+    return render(request, "forum/index.html")
 
+
+def home(request):
+    return render(request, 'forum/home.html')
+
+#Orders
 
 @login_required
 def make_order_for_private(request):
@@ -49,14 +45,81 @@ def make_order_for_private(request):
             material.save()
             messages.success(request, "Order has been added")
             return redirect("forum:make_order_for_soldier")
-    return render(request, 'forum/make_order_for_recruit.html', {'form': form})
+    return render(request, 'forum/create_order.html', {'form': form})
 
-
+@login_required
 def list_of_all_orders(request):
+    if not request.user.only_for_military():
+        return HttpResponseForbidden("You don't have permission to those actions.")
     orders = Order.objects.all()
     return render(request, 'forum/all_order_view.html', {'orders': orders})
 
 
+# Regiment-selection
+@login_required
+def create_selection(request):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to those actions")
+
+    form = RegimentSelectionForm()
+
+    if request.method == "POST":
+        form = RegimentSelectionForm(request.POST)
+        if form.is_valid():
+            selection = form.save(commit=False)
+            selection.published_by = request.user
+            selection.save()
+            messages.success(request, "The selection of regiment was successfully created")
+            return redirect("forum:create_selection")
+    return render(request, 'forum/create_selection.html', {'form': form})
+
+
+@login_required
+def sign_up_selection(request, selection_id):
+    selection = get_object_or_404(RegimentSelection, id=selection_id)
+
+    if selection.is_full():
+        messages.error(request, "This selection is already full!")
+    elif request.user in selection.recruits.all():
+        messages.warning(request, "You already signed up for this selection!")
+    else:
+        selection.recruits.add(request.user)
+        messages.success(request, f"You signed up for {selection.regiment}!")
+
+    return redirect('forum:selection_list')
+
+@login_required
+def selection_list(request):
+    if not request.user.only_for_military():
+        return HttpResponseForbidden("You don't have permission to those actions.")
+
+    selections = RegimentSelection.objects.all()
+    return render(request, 'forum/all_selections.html', {'selections': selections})
+
+@login_required
+def remove_recruit_from_selection(request, selection_id):
+    selection = get_object_or_404(RegimentSelection, id=selection_id)
+
+    if request.user in selection.recruits.all():
+        selection.recruits.remove(request.user)
+        messages.success(request, f"You're leaved from the selection of regiment {selection.regiment}")
+    else:
+        messages.warning(request, "You are not signed up for this selection!")
+
+    return redirect('forum:selection_list')
+
+
+@login_required
+def delete_selection(request, selection_id):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to those actions")
+
+    RegimentSelection.objects.filter(id=selection_id, published_by=request.user).delete()
+    messages.success(request, "You're deleted the selection")
+    return redirect('forum:selection_list')
+
+
+# News Reporting
 @login_required
 def create_news_of_british_army(request):
     if not request.user.can_create_news():
@@ -116,8 +179,6 @@ def mark_notification_read(request, pk):
         except MessageList.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Message not found'}, status=404)
     return JsonResponse({'success': False, 'error': 'Not authenticated'}, status=403)
-
-
 
 
 #Requests
@@ -205,7 +266,7 @@ def review_action(request, request_id):
 
 
 
-#Map with Operations
+#Operations
 @login_required
 def make_the_operation(request):
     if not request.user.staff_for_create():
@@ -217,13 +278,46 @@ def make_the_operation(request):
         form = OperationForm(request.POST)
         if form.is_valid():
             operation = form.save(commit=False)
+            operation.created_by = request.user
             operation.save()
             messages.success(request, "Operation has been added")
-            return redirect("forum:make_order_for_soldier")
+            return redirect("forum:list_of_operations")
     return render(request, 'forum/create_operation.html', {'form': form})
 
+@login_required
+def list_of_operations(request):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to view those actions.")
+
+    operations = Operation.objects.all()
+    return render(request, 'forum/view_list_of_operations.html', {'operations': operations})
+
+@login_required
+def delete_operation(request, operation_id):
+    Operation.objects.filter(id=operation_id, created_by=request.user).delete()
+    return redirect('forum:list_of_operations')
+
+@login_required
+def operation_edit(request, operation_id):
+    if not request.user.staff_for_create():
+        return HttpResponseForbidden("You don't have permission to those actions.")
+
+    operation = get_object_or_404(Operation, id=operation_id)
+
+    if request.method == 'POST':
+        form = OperationForm(request.POST, instance=operation)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Operation has been updated successfully')
+        else:
+            messages.error(request, 'Please correct errors')
+    else:
+        form = OperationForm(instance=operation)
+    return render(request, 'forum/edit_operation.html', {'form': form})
 
 
+
+#Circles
 @login_required
 def create_circle(request):
     if request.method == "POST":
@@ -231,13 +325,10 @@ def create_circle(request):
         x = data.get("x")
         y = data.get("y")
         operation_id = data.get("operation_id")
-        value = data.get("value")
-
         operation = Operation.objects.get(id=operation_id)
 
         circle = CircleData.objects.create(
             operation=operation,
-            value=value,
             x=x,
             y=y
         )
@@ -245,7 +336,6 @@ def create_circle(request):
         return JsonResponse({
             "id": circle.id,
             "operation": circle.operation.name,
-            "value": circle.value,
             "x": circle.x,
             "y": circle.y
         })
@@ -260,12 +350,22 @@ def get_circles(request):
         data.append({
             "id": c.id,
             "operation_name":c.operation.name,
-            "value": c.value,
             "x": c.x,
             "y": c.y
         })
     return JsonResponse(data, safe=False)
 
+
+@login_required
+def delete_circle(request, circle_id):
+    if request.method == "DELETE":
+        try:
+            circle = CircleData.objects.get(id=circle_id)
+            circle.delete()
+            return JsonResponse({"success": True})
+        except CircleData.DoesNotExist:
+            return JsonResponse({"error": "Circle not found"}, status=404)
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 @login_required
 def map_of_uk_view(request):

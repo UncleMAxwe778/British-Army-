@@ -3,22 +3,26 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.template.context_processors import request
 
-from .models import Order, News, Request, Operation
+from .models import Order, News, Request, Operation, RegimentSelection
 from user_officers.models import CustomUser
+
+
+class RegimentSelectionForm(forms.ModelForm):
+    class Meta:
+        model = RegimentSelection
+        fields = ("regiment", "description")
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ("name_order", "description_of_order", "data_giving", "rate_for_order", "user")
+        fields = ("name_order", "description_of_order", "data_giving", "user")
 
     def save(self, commit=True):
         order = super().save(commit=False)
         order.is_active = True
         order.save()
         return order
-
-
 
 
 class NewsForm(forms.ModelForm):

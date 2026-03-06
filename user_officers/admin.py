@@ -20,6 +20,7 @@ class CustomUserAdmin(admin.ModelAdmin):
         "is_staff"
     )
     list_editable = (
+        "role",
         "rank",
         "regiment",
         "is_active",

@@ -143,12 +143,15 @@ ALLOWED_ORDER_RANKS = [
 ]
 
 ALLOWED_NEWS_ROLES = ["PRESS"]
-
+ALLOWED_ONLY_MILITARY = ["MLT"]
 
 AUTH_USER_MODEL = "user_officers.CustomUser"
 
 LOGIN_URL = "auth_officers:login"
 LOGOUT_REDIRECT_URL = "auth_officers:login"
+LOGIN_REDIRECT_URL = 'forum:home_page'
+
+
 
 CACHES = {
     "default": {

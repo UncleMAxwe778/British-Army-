@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Regiment Selections</h2>
+
+{% for selection in selections %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ selection.regiment }}</h5>
+        <p class="card-text">{{ selection.description }}</p>
+        <p><strong>Date:</strong> {{ selection.date_giving|date:"Y-m-d H:i" }}</p>
+        <p class="card-text">{{ selection.published_by }}</p>
+        <p><strong>Signed Up Recruits:</strong></p>
+
+        {% if selection.recruits.count > 0 %}
+        <ul>
+            {% for user in selection.recruits.all %}
+            <li>{{ user }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No recruits signed up yet.</p>
+        {% endif %}
+
+        {% if request.user not in selection.recruits.all and not selection.is_full %}
+        <a href="{% url 'forum:sign_up_selection' selection.id %}" class="btn btn-primary">Sign up</a>
+        {% endif %}
+
+        {% if request.user in selection.recruits.all %}
+        <a href="{% url 'forum:remove_recruit_from_selection' selection.id %}" class="btn btn-danger btn-sm">Leave</a>
+        {% endif %}
+
+        {% if selection.is_full %}
+        <button class="btn btn-secondary" disabled>Full</button>
+        {% endif %}
+        <form method="POST" action="{% url 'forum:delete_selection' selection.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to delete this operation?');">DELETE
+            </button>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

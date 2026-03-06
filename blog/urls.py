@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from forum.api_views import api_ninja
 
+from forum.views import greetings_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('forum/', include('forum.urls')),
     path("auth_officers/", include('user_officers.urls', namespace="auth_officers")),
     path("captcha/", include("captcha.urls")),
-    path("api_ninja/", api_ninja.urls)
+    path("api_ninja/", api_ninja.urls),
+    path('', greetings_view, name='greetings_view')
 ]

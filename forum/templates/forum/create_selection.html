@@ -3,15 +3,12 @@
 
 
 {% block content %}
-
-<h2>Create the operation</h2>
-
 <div class="container w-50">
-    <form method="post" action="{% url 'forum:make_the_operation' %}">
+    <h2>Create the Selection</h2>
+    <form method="post" action="{% url 'forum:create_selection' %}">
         {% csrf_token %}
         {{ form|crispy }}
         <button type="submit" class="btn btn-primary">Create</button>
-        <a class="btn btn-primary" aria-current="page" href="{% url 'forum:list_of_operations' %}">Selections</a>
     </form>
 </div>
 {% endblock %}

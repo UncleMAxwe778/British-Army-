@@ -21,7 +21,7 @@ def register_view(request):
 
 
 @login_required
-def profile_view(request):
+def profile_edit(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -31,4 +31,9 @@ def profile_view(request):
             messages.error(request, 'Please correct errors')
     else:
         form = CustomUserForm(instance=request.user)
-    return render(request, 'user_officers/profile.html', {'form': form})
+    return render(request, 'user_officers/edit_profile.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    return render(request, "user_officers/profile.html")

@@ -11,7 +11,6 @@ from user_officers.models import CustomUser
 class Order(models.Model):
     name_order = models.CharField()
     description_of_order = models.TextField()
-    rate_for_order = models.IntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(10)])
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -24,6 +23,38 @@ class Order(models.Model):
     def __str__(self):
         return F"{self.name_order} {self.user} {self.data_giving}"
 
+
+class RegimentSelection(models.Model):
+    REGIMENT_CHOICES = [
+        ("RAC", "Royal Armoured Corps"),
+        ("BMP", " British Military Police"),
+        ("RM", "Royal Marines"),
+        ("MPR", "Military Parachute Regiment"),
+        ("UKSF", "United Kingdom Special Forces"),
+    ]
+
+    published_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='post_selections',
+        null=True,
+        blank=True
+    )
+    regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES,  null=True, blank=True)
+    description = models.TextField(max_length=200)
+    date_giving = models.DateTimeField(default=timezone.now)
+    max_recruits = models.PositiveIntegerField(default=10)
+    recruits = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='signed_up_to_selection',
+        blank=True
+    )
+
+    def __str__(self):
+        return F"{self.published_by} {self.regiment} {self.description} {self.date_giving} {self.max_recruits} - {self.recruits}"
+
+    def is_full(self):
+        return self.recruits.count() >= self.max_recruits
 
 class News(models.Model):
     news_name = models.CharField()
@@ -161,7 +192,6 @@ class Operation(models.Model):
 
 class CircleData(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    value = models.CharField(max_length=255, null=True, blank=True)
     x = models.FloatField(null=True, blank=True)
     y = models.FloatField(null=True, blank=True)
     operation = models.ForeignKey(
@@ -175,4 +205,9 @@ class CircleData(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return F"{self.operation} {self.value} {self.x} {self.y} {self.timestamp}"
+        return F"{self.operation} {self.x} {self.y} {self.timestamp}"
+
+
+
+
+
