@@ -43,6 +43,7 @@ def make_order_for_private(request):
         form = OrderForm(request.POST)
         if form.is_valid():
             material = form.save(commit=False)
+            material.published_by = request.user
             material.save()
             messages.success(request, "Order has been added")
             return redirect("forum:make_order_for_soldier")

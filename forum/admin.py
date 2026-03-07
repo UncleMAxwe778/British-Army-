@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import News, Operation, CircleData, Order, RegimentSelection
+from .models import News, Operation, CircleData, Order, RegimentSelection, Request
 
 @admin.register(News)
 class AdminNews(admin.ModelAdmin):
@@ -34,5 +34,8 @@ class AdminRegimentSelection(admin.ModelAdmin):
     list_filter = ( "published_by", "regiment", "description", "date_giving", "max_recruits")
 
 
-
-
+@admin.register(Request)
+class AdminRequest(admin.ModelAdmin):
+    list_display = ("id", "creator", "assigned_officer", "current_status", "title", "description", "created_at", "updated_at")
+    list_editable = ("current_status", )
+    list_filter = ( "creator", "assigned_officer", "current_status", "title", "description", "created_at", "updated_at")

@@ -112,7 +112,7 @@ function createCircleDiv(x, y, operationName, id) {
         tooltip.style.display = "none";
     });
 
-=
+
     circle.addEventListener("contextmenu", function(e) {
         e.preventDefault(); // prevent default right-click menu
 
@@ -138,7 +138,7 @@ function createCircleDiv(x, y, operationName, id) {
     mapContainer.appendChild(circle);
 }
 
-=
+
 document.getElementById("create-circle").addEventListener("click", () => {
     createMode = true;
     statusText.innerText = "Click on the map to place a circle.";

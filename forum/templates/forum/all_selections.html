@@ -34,12 +34,15 @@
         {% if selection.is_full %}
         <button class="btn btn-secondary" disabled>Full</button>
         {% endif %}
+
+        {% if user.staff_for_create %}
         <form method="POST" action="{% url 'forum:delete_selection' selection.id %}" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger"
                     onclick="return confirm('Are you sure you want to delete this operation?');">DELETE
             </button>
         </form>
+        {% endif %}
     </div>
 </div>
 {% endfor %}

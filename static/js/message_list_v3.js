@@ -93,26 +93,35 @@ function markAsRead(notificationId) {
     .catch(err => console.error(err));
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll("button[data-decision]").forEach(btn => {
-        btn.addEventListener("click", function() {
-            const requestId = this.dataset.id;
-            const decision = this.dataset.decision;
+
+document.addEventListener("DOMContentLoaded", () => {
+    const buttons = document.querySelectorAll("button[data-decision]");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            const requestId = button.dataset.id;
+            const decision = button.dataset.decision === "APPROVE" ? "APPROVED" : "REJECTED";
 
             fetch(`/forum/review-dashboard/review-action/${requestId}/`, {
                 method: "POST",
                 headers: {
+                    "Content-Type": "application/json",
                     "X-CSRFToken": getCookie('csrftoken'),
-                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ decision: decision })
             })
             .then(response => response.json())
             .then(data => {
-
-                document.getElementById(`status-${requestId}`).innerText = data.new_status;
+                if (data.new_status) {
+                    document.getElementById(`status-${requestId}`).textContent = data.new_status;
+                } else if (data.error) {
+                    alert(data.error);
+                }
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+            });
         });
     });
 });

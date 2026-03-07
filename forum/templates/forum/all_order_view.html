@@ -11,6 +11,7 @@
         <div class="card-body">
             <h5 class="card-title text-primary fw-bold">Call-name: {{ order.name_order }}</h5>
             <p class="card-text text-muted">Description: {{ order.description_of_order }}</p>
+            <p class="card-text"><strong>Created by:</strong> {{ order.published_by }}</p>
             <p class="card-text"><strong>For:</strong> {{ order.user.first_name }} {{ order.user.last_name }}, <strong>Rank:</strong> {{ order.user.rank }} </p>
             <p class="card-text text-end text-secondary">{{ order.data_giving }}</p>
         </div>

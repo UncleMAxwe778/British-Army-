@@ -14,7 +14,14 @@ class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='order',
+        related_name='order_for',
+        null=True,
+        blank=True
+    )
+    published_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='published_by',
         null=True,
         blank=True
     )
@@ -107,7 +114,7 @@ class Request(models.Model):
     )
     current_status = models.ForeignKey(
         "ReviewerOfRequest",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="+",
         null=True,
         blank=True
