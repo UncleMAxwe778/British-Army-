@@ -19,7 +19,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Функция для получения уведомлений
+// Function for taking a messages
 async function fetchNotifications() {
     try {
         const response = await fetch("/forum/notifications/unread/");

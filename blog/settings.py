@@ -151,6 +151,8 @@ LOGIN_URL = "auth_officers:login"
 LOGOUT_REDIRECT_URL = "auth_officers:login"
 LOGIN_REDIRECT_URL = 'forum:home_page'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 CACHES = {

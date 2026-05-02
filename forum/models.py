@@ -1,9 +1,11 @@
 import datetime
+import os
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import TextField
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from user_officers.models import CustomUser
 
@@ -47,7 +49,7 @@ class RegimentSelection(models.Model):
         null=True,
         blank=True
     )
-    regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES,  null=True, blank=True)
+    regiment = models.CharField(max_length=10, choices=REGIMENT_CHOICES, null=True, blank=True)
     description = models.TextField(max_length=200)
     date_giving = models.DateTimeField(default=timezone.now)
     max_recruits = models.PositiveIntegerField(default=10)
@@ -62,6 +64,7 @@ class RegimentSelection(models.Model):
 
     def is_full(self):
         return self.recruits.count() >= self.max_recruits
+
 
 class News(models.Model):
     news_name = models.CharField()
@@ -98,8 +101,13 @@ class MessageList(models.Model):
     is_read = models.BooleanField(default=False)
 
 
-class Request(models.Model):
+def validate_document(file):
+    ext = os.path.splitext(file.name)[1].lower()
+    if ext not in ['.jpg', '.jpeg', '.png']:
+        raise ValidationError('Only JPG, JPEG, PNG files are allowed')
 
+
+class Request(models.Model):
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -123,6 +131,16 @@ class Request(models.Model):
     description = models.TextField(max_length=230)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    document = models.ImageField(
+        upload_to='document_pictures/',
+        validators=[validate_document],
+        null=True,
+        blank=True,
+        help_text="Upload document image"
+    )
+
+    def __str__(self):
+        return F" Document picture:{self.document}"
 
 
 class ReviewerOfRequest(models.Model):
@@ -169,9 +187,8 @@ class Operation(models.Model):
         ('SCOTLAND', 'Scotland'),
         ('ENGLAND', 'England'),
         ('WALES', 'Wales'),
-        ('NI','North Ireland')
+        ('NI', 'North Ireland')
     ]
-
 
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -197,6 +214,7 @@ class Operation(models.Model):
     def __str__(self):
         return F"{self.name} {self.description} {self.region} {self.status} {self.created_by}"
 
+
 class CircleData(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     x = models.FloatField(null=True, blank=True)
@@ -208,13 +226,9 @@ class CircleData(models.Model):
         null=True,
         blank=True
     )
+
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
         return F"{self.operation} {self.x} {self.y} {self.timestamp}"
-
-
-
-
-

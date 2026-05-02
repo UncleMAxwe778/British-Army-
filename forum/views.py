@@ -1,3 +1,5 @@
+import cv2
+from PIL import Image
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
@@ -13,13 +15,20 @@ from django.http import JsonResponse
 from django.db.models import Q
 import json
 
-from .forms import OrderForm, NewsForm, RequestForm, OperationForm, RegimentSelectionForm
+
+from .forms import OrderForm, NewsForm, RequestForm, RequestForArmyForm, OperationForm, RegimentSelectionForm
 from .models import Order, News, Request, MessageList, ReviewerOfRequest, Operation, CircleData, RegimentSelection
 from .filters import PrivateFilter
 import logging
 from user_officers.models import CustomUser
+from ultralytics import YOLO
+import cv2
+
 
 logger = logging.getLogger(__name__)
+
+model = YOLO('./dataset_cv2/best.pt')
+
 
 # Index
 def greetings_view(request):
@@ -197,6 +206,41 @@ def request_as_a_user(request):
             messages.success(request, "Your request is successfully issued")
             return redirect("forum:list_of_requests")
     return render(request, 'forum/create_request.html', {'form': form})
+
+
+@login_required
+def request_as_a_user_for_join_army(request):
+    form = RequestForArmyForm()
+
+    if request.method == "POST":
+        form = RequestForArmyForm(request.POST, request.FILES)
+        if form.is_valid():
+            requestt_2 = form.save(commit=False)
+            requestt_2.creator = request.user
+            requestt_2.save()
+
+            img = Image.open(requestt_2.document.path)
+            result = model(img)
+            boxes = result[0].boxes
+            # plot = result[0].plot()
+
+            has_valid_inprint = False
+            for x in boxes:
+                if float(x.conf) > 0.5:
+                    has_valid_inprint = True
+                    break
+
+            # cv2.imshow('result', plot)
+            # cv2.waitKey(0)
+            if has_valid_inprint:
+                messages.success(request,
+                                 "Your request for submission for army is successfully issued (inprint detected)")
+            else:
+                messages.error(request, "Your application has been refused: none inprint")
+            return redirect("forum:list_of_requests")
+
+    return render(request, 'forum/create_request_for_army.html', {'form': form})
+
 
 
 @login_required

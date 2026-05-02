@@ -3,11 +3,28 @@
 
 {% block content %}
 
+
+<style>
+    .document-img {
+        max-width: 400px;
+        max-height: 600px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
 {% for rqst in reviews %}
 <div class="card mb-3" id="request-{{ rqst.request.id }}">
     <div class="card-body">
         <h5 class="card-title">{{ rqst.request.title }}</h5>
         <p>{{ rqst.request.description }}</p>
+        {% if rqst.request.document %}
+        <img src="{{ rqst.request.document.url }}" alt="document" class="document-img"/>
+        {% endif %}
         <p>Status: <span id="status-{{ rqst.request.id }}">{{ rqst.request.current_status }}</span></p>
         <button type="button" data-decision="APPROVE" data-id="{{ rqst.request.id }}" class="btn btn-success btn-sm">
             Approve

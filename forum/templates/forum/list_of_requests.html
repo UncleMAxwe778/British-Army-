@@ -3,6 +3,20 @@
 {% block title %}REQUESTS{% endblock %}
 
 {% block content %}
+
+<style>
+    .document-img {
+        max-width: 400px;
+        max-height: 600px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
 {% for rqst in requests %}
 <div class="container px-4 px-lg-5 mt-5 fade-in">
     <div class="card mb-3">
@@ -12,11 +26,15 @@
             <p class="card-text">Status: {{ rqst.current_status }}</p>
             <p class="card-text">By: {{ rqst.creator.last_name }}</p>
             <p class="card-text">Date: {{ rqst.created_at }}</p>
+            {% if rqst.document %}
+            <img src="{{ rqst.document.url }}" alt="document" class="document-img"/>
+            {% endif %}
         </div>
         {% if user.staff_for_create %}
         <div class="text-center">
-                <a class="btn btn-outline-primary mt-auto js-loading" href="add-request-to-review-list/{{rqst.id}}">For Checking</a>
-            </div>
+            <a class="btn btn-outline-primary mt-auto js-loading" href="add-request-to-review-list/{{rqst.id}}">For
+                Checking</a>
+        </div>
         {% endif %}
     </div>
 </div>

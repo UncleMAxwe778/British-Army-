@@ -5,7 +5,7 @@ from .views import ( home, make_order_for_private, list_of_all_orders, create_ne
                     add_request_to_review_list,
                     review_dashboard,
                     mark_notification_read, review_action, map_of_uk_view, create_circle, get_circles, delete_circle, make_the_operation,
-                    list_of_operations, delete_operation, operation_edit, selection_list, sign_up_selection, create_selection, remove_recruit_from_selection, delete_selection
+                    list_of_operations, delete_operation, operation_edit, selection_list, sign_up_selection, create_selection, remove_recruit_from_selection, delete_selection, request_as_a_user_for_join_army
                     )
 
 
@@ -21,6 +21,7 @@ urlpatterns = [
     path('notifications/unread/', unread_notifications, name='unread_notifications'),
     path('notifications/read/<int:pk>/', mark_notification_read, name='mark_notification_read'),
     path('request-as-a-user/', request_as_a_user, name='request_as_a_user'),
+    path('request-as-a-user-for-join-army/', request_as_a_user_for_join_army, name='request_as_a_user_for_join_army'),
     path('list-of-requests/', list_of_requests, name='list_of_requests'),
     path('list-of-requests/add-request-to-review-list/<int:request_id>/', add_request_to_review_list, name='add_request_to_review_list'),
     path('review-dashboard/', review_dashboard, name='review_dashboard'),

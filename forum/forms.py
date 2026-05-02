@@ -55,6 +55,25 @@ class RequestForm(forms.ModelForm):
             rank__in=["COL", "BRIG","MG", "LG", "GEN"]
         )
 
+class RequestForArmyForm(forms.ModelForm):
+
+    class Meta:
+        model = Request
+        fields = ("title", "description", "assigned_officer", "document")
+        widgets = {
+            'document': forms.FileInput(attrs={
+                'accept': 'image/*',
+                'class': 'form-control'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["assigned_officer"].queryset = CustomUser.objects.filter(
+            role="MLT",
+            rank__in=["COL", "BRIG","MG", "LG", "GEN"]
+        )
 
 
 class OperationForm(forms.ModelForm):
